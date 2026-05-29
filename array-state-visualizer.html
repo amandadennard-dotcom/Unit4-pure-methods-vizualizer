@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Array State Visualizer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      background: #ffffff;
+      color: #1a1a1a;
+      padding: 1.25rem 1.5rem 2rem;
+      line-height: 1.5;
+    }
+
+    .method-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .method-label code {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 13px;
+      color: #1a1a1a;
+    }
+
+    .code-block {
+      background: #f5f5f3;
+      border: 1px solid #e0e0d8;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 12.5px;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+      line-height: 1.7;
+      white-space: pre;
+    }
+
+    .hl {
+      background: #EEEDFE;
+      color: #3C3489;
+      border-radius: 3px;
+      padding: 1px 3px;
+    }
+
+    .comment { color: #999; }
+
+    .run-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 7px;
+      border: 1px solid #d0d0c8;
+      background: #fff;
+      color: #1a1a1a;
+      font-size: 12.5px;
+      font-family: inherit;
+      cursor: pointer;
+      margin-bottom: 14px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .run-btn:hover { background: #f5f5f3; border-color: #bbb; }
+    .run-btn:active { transform: scale(0.98); }
+
+    .run-btn svg {
+      width: 13px;
+      height: 13px;
+      fill: #555;
+    }
+
+    .arrays-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .arr-card {
+      border-radius: 10px;
+      border: 1px solid #e0e0d8;
+      background: #fff;
+      padding: 12px 13px;
+    }
+
+    .arr-title {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 9px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge {
+      font-size: 10.5px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .badge-orig  { background: #EEEDFE; color: #3C3489; }
+    .badge-result{ background: #E1F5EE; color: #085041; }
+    .badge-mut   { background: #fde8e8; color: #791F1F; }
+
+    .arr-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      min-height: 32px;
+    }
+
+    .item {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      background: #f5f5f3;
+      border: 1px solid #e0e0d8;
+      color: #1a1a1a;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.25s, transform 0.25s, background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .item.visible { opacity: 1; transform: translateY(0); }
+
+    .item.same     { background: #EEEDFE; border-color: #AFA9EC; color: #3C3489; }
+    .item.new      { background: #E1F5EE; border-color: #5DCAA5; color: #085041; }
+    .item.changed  { background: #fde8e8; border-color: #f09595; color: #791F1F; }
+    .item.removed  { background: #fde8e8; border-color: #f09595; color: #791F1F; text-decoration: line-through; opacity: 0.55; }
+
+    .empty-msg {
+      font-size: 11.5px;
+      color: #aaa;
+      font-style: italic;
+      padding: 4px 0;
+      opacity: 1;
+      transform: none;
+    }
+
+    .verdict {
+      margin-top: 8px;
+      font-size: 12.5px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .verdict.pure    { background: #E1F5EE; color: #085041; border: 1px solid #5DCAA5; }
+    .verdict.mutated { background: #fde8e8; color: #791F1F; border: 1px solid #f09595; }
+
+    .verdict .icon { margin-right: 5px; font-size: 13px; vertical-align: -1px; }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid #e8e8e4;
+      margin: 1.5rem 0;
+    }
+
+    .section { margin-bottom: 0; }
+
+    .reset-wrap {
+      margin-top: 1.5rem;
+      text-align: right;
+    }
+
+    .reset-btn {
+      font-size: 12px;
+      color: #888;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      text-decoration: underline;
+      padding: 0;
+    }
+
+    .reset-btn:hover { color: #333; }
+  </style>
+</head>
+<body>
+
+  <!-- .filter() -->
+  <div class="section">
+    <div class="method-label"><code>.filter()</code> — pure method</div>
+    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+const result = opportunities.<span class="hl">filter</span>(role => role !== "art");
+
+console.log(opportunities); <span class="comment">// ?</span>
+console.log(result);       <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runFilter()">
+      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities</div>
+        <div class="arr-items" id="filter-orig"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-result">result</span> result</div>
+        <div class="arr-items" id="filter-result"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict pure" id="filter-verdict">
+      <span class="icon">&#10003;</span> Original array unchanged — <code>.filter()</code> is a pure method. It returned a brand new array.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- .map() -->
+  <div class="section">
+    <div class="method-label"><code>.map()</code> — pure method</div>
+    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+const result = opportunities.<span class="hl">map</span>(role => role.toUpperCase());
+
+console.log(opportunities); <span class="comment">// ?</span>
+console.log(result);       <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runMap()">
+      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities</div>
+        <div class="arr-items" id="map-orig"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-result">result</span> result</div>
+        <div class="arr-items" id="map-result"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict pure" id="map-verdict">
+      <span class="icon">&#10003;</span> Original array unchanged — <code>.map()</code> is a pure method. Each item was transformed into a brand new array.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- .forEach() -->
+  <div class="section">
+    <div class="method-label"><code>.forEach()</code> — side effect</div>
+    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+opportunities.<span class="hl">forEach</span>((role, i) => {
+  opportunities[i] = role.toUpperCase();
+});
+
+console.log(opportunities); <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runForEach()">
+      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(before)</span></div>
+        <div class="arr-items" id="foreach-before"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-mut">mutated</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(after)</span></div>
+        <div class="arr-items" id="foreach-after"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict mutated" id="foreach-verdict">
+      <span class="icon">&#9888;</span> Original array was changed! <code>.forEach()</code> has no return value — any modification inside it is a side effect on the original data.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- for loop -->
+  <div class="section">
+    <div class="method-label"><code>for loop</code> — side effect</div>
+    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+for (let i = 0; i &lt; opportunities.length; i++) {
+  <span class="hl">opportunities[i]</span> = opportunities[i].toUpperCase();
+}
+
+console.log(opportunities); <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runFor()">
+      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(before)</span></div>
+        <div class="arr-items" id="for-before"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-mut">mutated</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(after)</span></div>
+        <div class="arr-items" id="for-after"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict mutated" id="for-verdict">
+      <span class="icon">&#9888;</span> Original array was changed! The <code>for</code> loop wrote directly into <code>opportunities[i]</code>, overwriting each item in place.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- .shift() -->
+  <div class="section">
+    <div class="method-label"><code>.shift()</code> — side effect</div>
+    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+const first = opportunities.<span class="hl">shift</span>();
+
+console.log(opportunities); <span class="comment">// ?</span>
+console.log(first);        <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runShift()">
+      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(before)</span></div>
+        <div class="arr-items" id="shift-before"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-mut">mutated</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(after)</span></div>
+        <div class="arr-items" id="shift-after"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict mutated" id="shift-verdict">
+      <span class="icon">&#9888;</span> Original array was changed! <code>.shift()</code> removed <code>"tutoring"</code> from the front and returned it — the original is now shorter.
+    </div>
+  </div>
+
+  <div class="reset-wrap">
+    <button class="reset-btn" onclick="resetAll()">Reset all</button>
+  </div>
+
+  <script>
+    const BASE = ["tutoring","mentoring","coding","art","music"];
+
+    function makeItems(containerId, items, classes) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      items.forEach((v, i) => {
+        const el = document.createElement('span');
+        el.className = 'item ' + (classes[i] || '');
+        el.textContent = '"' + v + '"';
+        container.appendChild(el);
+        setTimeout(() => el.classList.add('visible'), i * 60 + 30);
+      });
+    }
+
+    function showVerdict(id, type) {
+      const v = document.getElementById(id);
+      v.className = 'verdict ' + type;
+      v.style.display = 'block';
+      setTimeout(() => { v.style.opacity = '1'; }, 20);
+    }
+
+    function runFilter() {
+      const result = BASE.filter(r => r !== 'art');
+      makeItems('filter-orig', [...BASE], BASE.map(() => 'same'));
+      makeItems('filter-result', result, result.map(() => 'new'));
+      showVerdict('filter-verdict', 'pure');
+    }
+
+    function runMap() {
+      const result = BASE.map(r => r.toUpperCase());
+      makeItems('map-orig', [...BASE], BASE.map(() => 'same'));
+      makeItems('map-result', result, result.map(() => 'new'));
+      showVerdict('map-verdict', 'pure');
+    }
+
+    function runForEach() {
+      const mut = [...BASE];
+      mut.forEach((r, i) => { mut[i] = r.toUpperCase(); });
+      makeItems('foreach-before', [...BASE], BASE.map(() => ''));
+      makeItems('foreach-after', mut, mut.map(() => 'changed'));
+      showVerdict('foreach-verdict', 'mutated');
+    }
+
+    function runFor() {
+      const mut = [...BASE];
+      for (let i = 0; i < mut.length; i++) { mut[i] = mut[i].toUpperCase(); }
+      makeItems('for-before', [...BASE], BASE.map(() => ''));
+      makeItems('for-after', mut, mut.map(() => 'changed'));
+      showVerdict('for-verdict', 'mutated');
+    }
+
+    function runShift() {
+      const mut = [...BASE];
+      mut.shift();
+      makeItems('shift-before', [...BASE], BASE.map((v, i) => i === 0 ? 'removed' : ''));
+      makeItems('shift-after', mut, mut.map(() => 'changed'));
+      showVerdict('shift-verdict', 'mutated');
+    }
+
+    function resetAll() {
+      const ids = [
+        'filter-orig','filter-result',
+        'map-orig','map-result',
+        'foreach-before','foreach-after',
+        'for-before','for-after',
+        'shift-before','shift-after'
+      ];
+      ids.forEach(id => {
+        document.getElementById(id).innerHTML = '<span class="empty-msg">not run yet</span>';
+      });
+      ['filter-verdict','map-verdict','foreach-verdict','for-verdict','shift-verdict'].forEach(id => {
+        const v = document.getElementById(id);
+        v.style.display = 'none';
+        v.style.opacity = '0';
+      });
+    }
+  </script>
+</body>
+</html>
