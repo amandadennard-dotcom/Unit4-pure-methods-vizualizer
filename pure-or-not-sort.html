@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pure or Not? Sorting What You Know</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      background: #ffffff;
+      color: #1a1a1a;
+      padding: 1.25rem 1.5rem 2rem;
+      line-height: 1.5;
+    }
+
+    .directions {
+      background: #B7E0E5;
+      border-radius: 10px;
+      padding: 13px 16px;
+      margin-bottom: 1.5rem;
+      font-size: 13px;
+      color: #0a3d42;
+      line-height: 1.6;
+    }
+
+    .bank-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .method-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 48px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f5f5f3;
+      border: 1.5px dashed #d0d0c8;
+      margin-bottom: 1.5rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .method-bank.drag-over {
+      background: #f0eefa;
+      border-color: #9b7ec8;
+    }
+
+    .zones {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 1rem;
+    }
+
+    .zone {
+      min-height: 150px;
+      border-radius: 10px;
+      padding: 14px;
+      border: 1.5px dashed #d0d0c8;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .zone-pure  { background: #f0eefa; border-color: #c5b3ea; }
+    .zone-side  { background: #f0f0ee; border-color: #c8c8c4; }
+
+    .zone.drag-over.zone-pure { background: #e4d7f0; border-color: #7c5cbf; border-style: solid; }
+    .zone.drag-over.zone-side { background: #e4e4e0; border-color: #999; border-style: solid; }
+
+    .zone-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .zone-pure .zone-label { color: #3C3489; }
+    .zone-side .zone-label { color: #444; }
+
+    .zone-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      min-height: 50px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 13px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-weight: 500;
+      cursor: grab;
+      background: #ffffff;
+      border: 1px solid #d0d0c8;
+      color: #1a1a1a;
+      transition: background 0.2s, border-color 0.2s, color 0.2s, opacity 0.2s;
+      user-select: none;
+    }
+
+    .chip:active { cursor: grabbing; opacity: 0.65; }
+
+    .chip.correct {
+      background: #e8f5ee;
+      border-color: #5DCAA5;
+      color: #085041;
+      cursor: default;
+    }
+
+    .chip.incorrect {
+      background: #fde8e8;
+      border-color: #f09595;
+      color: #791F1F;
+      animation: shake 0.3s ease;
+    }
+
+    .chip.locked { cursor: default; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-5px); }
+      75%      { transform: translateX(5px); }
+    }
+
+    .bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .score-area {
+      font-size: 13px;
+      color: var(--color-text-secondary, #666);
+    }
+
+    .score-num {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a1a;
+      display: block;
+      line-height: 1.2;
+    }
+
+    .btn-row { display: flex; gap: 8px; }
+
+    .check-btn {
+      padding: 7px 18px;
+      border-radius: 8px;
+      border: 1.5px solid #534AB7;
+      background: #534AB7;
+      color: #fff;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .check-btn:hover { background: #3C3489; border-color: #3C3489; }
+    .check-btn:disabled { opacity: 0.35; cursor: default; }
+
+    .reset-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid #d0d0c8;
+      background: transparent;
+      color: #666;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .reset-btn:hover { background: #f5f5f3; }
+
+    .hints {
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .hint-item {
+      font-size: 12.5px;
+      padding: 7px 11px;
+      border-radius: 7px;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .hint-item.correct-hint { background: #e8f5ee; color: #085041; border: 1px solid #5DCAA5; }
+    .hint-item.wrong-hint   { background: #fde8e8; color: #791F1F; border: 1px solid #f09595; }
+
+    .progress-wrap {
+      margin-bottom: 1rem;
+    }
+
+    .progress-track {
+      height: 4px;
+      background: #e8e8e4;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #534AB7;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-label {
+      font-size: 11.5px;
+      color: #aaa;
+      margin-top: 4px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="directions">
+    Drag each method into the correct category. Use what you saw in the visualizer to guide you — then check your answers.
+  </div>
+
+  <div class="bank-label">Methods to sort</div>
+  <div class="method-bank" id="bank"
+    ondragover="dragOver(event,'bank')"
+    ondragleave="dragLeave(event,'bank')"
+    ondrop="drop(event,'bank')">
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-label" id="progress-label">0 of 5 placed</div>
+  </div>
+
+  <div class="zones">
+    <div class="zone zone-pure" id="zone-pure"
+      ondragover="dragOver(event,'zone-pure')"
+      ondragleave="dragLeave(event,'zone-pure')"
+      ondrop="drop(event,'zone-pure')">
+      <div class="zone-label">&#10022; Pure / non-mutating</div>
+      <div class="zone-items" id="items-zone-pure"></div>
+    </div>
+    <div class="zone zone-side" id="zone-side"
+      ondragover="dragOver(event,'zone-side')"
+      ondragleave="dragLeave(event,'zone-side')"
+      ondrop="drop(event,'zone-side')">
+      <div class="zone-label">&#9889; Has side effects</div>
+      <div class="zone-items" id="items-zone-side"></div>
+    </div>
+  </div>
+
+  <div class="bottom-row">
+    <div class="score-area">
+      <span class="score-num" id="score-display">—</span>
+      <span id="score-label">place all methods to check</span>
+    </div>
+    <div class="btn-row">
+      <button class="reset-btn" onclick="reset()">Reset</button>
+      <button class="check-btn" id="check-btn" onclick="checkAll()" disabled>Check answers</button>
+    </div>
+  </div>
+
+  <div class="hints" id="hints"></div>
+
+  <script>
+    const METHODS = [
+      { id: 'filter',  label: '.filter()',  zone: 'zone-pure', hint: 'Returns a new array — the original is never touched.' },
+      { id: 'map',     label: '.map()',     zone: 'zone-pure', hint: 'Transforms each item into a brand new array — pure.' },
+      { id: 'forEach', label: '.forEach()', zone: 'zone-side', hint: 'No return value — any change inside it mutates the original.' },
+      { id: 'forloop', label: 'for loop',   zone: 'zone-side', hint: 'Writes directly into the original array with opportunities[i] = ...' },
+      { id: 'shift',   label: '.shift()',   zone: 'zone-side', hint: 'Removes the first item from the original array in place.' },
+    ];
+
+    let placement = {};
+    let checked = false;
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function makeChip(m) {
+      const el = document.createElement('div');
+      const loc = placement[m.id] || 'bank';
+      let cls = 'chip';
+      if (checked) {
+        cls += placement[m.id] === m.zone ? ' correct locked' : ' incorrect locked';
+      }
+      el.className = cls;
+      el.textContent = m.label;
+      el.dataset.id = m.id;
+      el.draggable = !checked;
+      el.ondragstart = e => e.dataTransfer.setData('text/plain', m.id);
+      return el;
+    }
+
+    function render() {
+      const bank = document.getElementById('bank');
+      const pureBin = document.getElementById('items-zone-pure');
+      const sideBin = document.getElementById('items-zone-side');
+      bank.innerHTML = '';
+      pureBin.innerHTML = '';
+      sideBin.innerHTML = '';
+
+      shuffle(METHODS).forEach(m => {
+        const loc = placement[m.id] || 'bank';
+        const chip = makeChip(m);
+        if (loc === 'bank') bank.appendChild(chip);
+        else if (loc === 'zone-pure') pureBin.appendChild(chip);
+        else sideBin.appendChild(chip);
+      });
+
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const placed = Object.keys(placement).length;
+      const total = METHODS.length;
+      const pct = Math.round((placed / total) * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-label').textContent = placed + ' of ' + total + ' placed';
+      document.getElementById('check-btn').disabled = placed < total || checked;
+      if (placed < total) {
+        document.getElementById('score-label').textContent = (total - placed) + ' left to place';
+      } else if (!checked) {
+        document.getElementById('score-label').textContent = 'ready — check your answers!';
+      }
+    }
+
+    function dragOver(e, id) {
+      e.preventDefault();
+      document.getElementById(id).classList.add('drag-over');
+    }
+
+    function dragLeave(e, id) {
+      document.getElementById(id).classList.remove('drag-over');
+    }
+
+    function drop(e, id) {
+      e.preventDefault();
+      document.getElementById(id).classList.remove('drag-over');
+      if (checked) return;
+      const mid = e.dataTransfer.getData('text/plain');
+      if (!mid) return;
+      placement[mid] = id;
+      render();
+    }
+
+    function checkAll() {
+      if (Object.keys(placement).length < METHODS.length) return;
+      checked = true;
+      let correct = 0;
+      METHODS.forEach(m => { if (placement[m.id] === m.zone) correct++; });
+      render();
+
+      const pct = Math.round((correct / METHODS.length) * 100);
+      document.getElementById('score-display').textContent = correct + ' / ' + METHODS.length;
+      document.getElementById('score-label').textContent =
+        pct === 100 ? 'perfect — you know your methods!' :
+        pct >= 60  ? 'nice work — review the hints below' :
+                     'keep going — the hints below will help';
+
+      showHints(correct);
+      document.getElementById('check-btn').disabled = true;
+    }
+
+    function showHints(correct) {
+      const el = document.getElementById('hints');
+      el.style.display = 'block';
+
+      if (correct === METHODS.length) {
+        el.innerHTML = '<div class="hint-item correct-hint">All correct! Pure functions return new data and leave the original alone. Side effects change something outside the function.</div>';
+        return;
+      }
+
+      const wrong = METHODS.filter(m => placement[m.id] !== m.zone);
+      const right = METHODS.filter(m => placement[m.id] === m.zone);
+
+      let html = '';
+      wrong.forEach(m => {
+        html += `<div class="hint-item wrong-hint"><code>${m.label}</code> — ${m.hint}</div>`;
+      });
+      if (right.length > 0 && wrong.length > 0) {
+        html += `<div class="hint-item correct-hint">You got <strong>${right.map(m => m.label).join(', ')}</strong> correct.</div>`;
+      }
+      el.innerHTML = html;
+    }
+
+    function reset() {
+      placement = {};
+      checked = false;
+      document.getElementById('score-display').textContent = '—';
+      document.getElementById('score-label').textContent = 'place all methods to check';
+      document.getElementById('hints').style.display = 'none';
+      document.getElementById('hints').innerHTML = '';
+      document.getElementById('progress-fill').style.width = '0%';
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
