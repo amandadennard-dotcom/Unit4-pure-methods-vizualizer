@@ -9,120 +9,140 @@
 
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       background: #ffffff;
       color: #1a1a1a;
       padding: 1.25rem 1.5rem 2rem;
       line-height: 1.5;
     }
 
-    .method-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: #555;
+    /* ── Directions banner ── */
+    .directions {
+      background: #D5EFFF;
+      border-radius: 10px;
+      padding: 13px 16px;
+      margin-bottom: 1.75rem;
+      font-size: 13.5px;
+      color: #06338D;
+      line-height: 1.6;
+    }
+    .directions ol { margin: 6px 0 0 1.1rem; padding: 0; }
+    .directions li { margin-bottom: 3px; }
+
+    /* ── Section header ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 10px;
     }
-
-    .method-label code {
-      font-family: 'Consolas', 'Courier New', monospace;
-      font-size: 13px;
-      color: #1a1a1a;
+    .section-header h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1F1976;
+      font-family: 'Segoe UI', system-ui, sans-serif;
     }
+    .type-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .type-badge.pure    { background: #E4E2F8; color: #1F1976; }
+    .type-badge.mutated { background: #FFE3CE; color: #510000; }
 
+    /* ── Code block ── */
     .code-block {
-      background: #f5f5f3;
-      border: 1px solid #e0e0d8;
-      border-radius: 8px;
-      padding: 12px 14px;
+      background: #1F1976;
+      border-radius: 10px;
+      padding: 16px 18px;
       font-family: 'Consolas', 'Courier New', monospace;
-      font-size: 12.5px;
-      color: #1a1a1a;
-      margin-bottom: 10px;
-      line-height: 1.7;
+      font-size: 14px;
+      font-weight: 500;
+      color: #E4E2F8;
+      margin-bottom: 12px;
+      line-height: 1.8;
       white-space: pre;
+      overflow-x: auto;
     }
-
     .hl {
-      background: #EEEDFE;
-      color: #3C3489;
+      background: #4C42CF;
+      color: #ffffff;
       border-radius: 3px;
-      padding: 1px 3px;
+      padding: 1px 4px;
+      font-weight: 700;
     }
+    .comment { color: #ACA8EA; font-style: italic; }
 
-    .comment { color: #999; }
-
+    /* ── Run button ── */
     .run-btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 7px;
-      border: 1px solid #d0d0c8;
-      background: #fff;
-      color: #1a1a1a;
-      font-size: 12.5px;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: none;
+      background: #4C42CF;
+      color: #ffffff;
+      font-size: 13.5px;
+      font-weight: 600;
       font-family: inherit;
       cursor: pointer;
       margin-bottom: 14px;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.15s;
     }
-
-    .run-btn:hover { background: #f5f5f3; border-color: #bbb; }
+    .run-btn:hover  { background: #1F1976; }
     .run-btn:active { transform: scale(0.98); }
+    .run-btn:focus-visible { outline: 3px solid #ACA8EA; outline-offset: 2px; }
+    .run-btn svg { width: 13px; height: 13px; fill: #fff; }
 
-    .run-btn svg {
-      width: 13px;
-      height: 13px;
-      fill: #555;
-    }
-
+    /* ── Array cards ── */
     .arrays-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-bottom: 8px;
     }
-
     .arr-card {
       border-radius: 10px;
-      border: 1px solid #e0e0d8;
+      border: 1px solid #E4E2F8;
       background: #fff;
-      padding: 12px 13px;
+      padding: 13px 14px;
     }
-
     .arr-title {
-      font-size: 11.5px;
-      font-weight: 600;
-      color: #666;
-      margin-bottom: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1F1976;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
-
     .badge {
       font-size: 10.5px;
       padding: 2px 8px;
       border-radius: 20px;
-      font-weight: 600;
+      font-weight: 700;
     }
+    .badge-orig   { background: #E4E2F8; color: #1F1976; }
+    .badge-result { background: #CCF1D0; color: #003F25; }
+    .badge-mut    { background: #FFE3CE; color: #510000; }
 
-    .badge-orig  { background: #EEEDFE; color: #3C3489; }
-    .badge-result{ background: #E1F5EE; color: #085041; }
-    .badge-mut   { background: #fde8e8; color: #791F1F; }
-
+    /* ── Array items ── */
     .arr-items {
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
-      min-height: 32px;
+      min-height: 34px;
     }
-
     .item {
-      padding: 4px 10px;
+      padding: 5px 11px;
       border-radius: 6px;
-      font-size: 12px;
+      font-size: 13px;
       font-family: 'Consolas', 'Courier New', monospace;
+      font-weight: 600;
       background: #f5f5f3;
       border: 1px solid #e0e0d8;
       color: #1a1a1a;
@@ -130,16 +150,14 @@
       transform: translateY(5px);
       transition: opacity 0.25s, transform 0.25s, background 0.2s, border-color 0.2s, color 0.2s;
     }
-
-    .item.visible { opacity: 1; transform: translateY(0); }
-
-    .item.same     { background: #EEEDFE; border-color: #AFA9EC; color: #3C3489; }
-    .item.new      { background: #E1F5EE; border-color: #5DCAA5; color: #085041; }
-    .item.changed  { background: #fde8e8; border-color: #f09595; color: #791F1F; }
-    .item.removed  { background: #fde8e8; border-color: #f09595; color: #791F1F; text-decoration: line-through; opacity: 0.55; }
+    .item.visible  { opacity: 1; transform: translateY(0); }
+    .item.same     { background: #E4E2F8; border-color: #ACA8EA; color: #1F1976; }
+    .item.new      { background: #CCF1D0; border-color: #7CDB87; color: #003F25; }
+    .item.changed  { background: #FFE3CE; border-color: #FFA868; color: #510000; }
+    .item.removed  { background: #FFE3CE; border-color: #FFA868; color: #510000; text-decoration: line-through; opacity: 0.55; }
 
     .empty-msg {
-      font-size: 11.5px;
+      font-size: 12px;
       color: #aaa;
       font-style: italic;
       padding: 4px 0;
@@ -147,37 +165,34 @@
       transform: none;
     }
 
+    /* ── Verdict ── */
     .verdict {
-      margin-top: 8px;
-      font-size: 12.5px;
-      padding: 8px 12px;
+      margin-top: 10px;
+      font-size: 13.5px;
+      padding: 10px 14px;
       border-radius: 8px;
       display: none;
       opacity: 0;
       transition: opacity 0.3s;
+      line-height: 1.5;
     }
+    .verdict.pure    { background: #E4E2F8; color: #1F1976; border: 1px solid #ACA8EA; }
+    .verdict.mutated { background: #FFE3CE; color: #510000; border: 1px solid #FFA868; }
+    .verdict .icon   { margin-right: 5px; font-size: 14px; vertical-align: -1px; }
+    .verdict .type-badge { vertical-align: middle; margin-right: 6px; }
 
-    .verdict.pure    { background: #E1F5EE; color: #085041; border: 1px solid #5DCAA5; }
-    .verdict.mutated { background: #fde8e8; color: #791F1F; border: 1px solid #f09595; }
-
-    .verdict .icon { margin-right: 5px; font-size: 13px; vertical-align: -1px; }
-
+    /* ── Divider ── */
     hr.divider {
       border: none;
-      border-top: 1px solid #e8e8e4;
-      margin: 1.5rem 0;
+      border-top: 1px solid #E4E2F8;
+      margin: 1.75rem 0;
     }
 
-    .section { margin-bottom: 0; }
-
-    .reset-wrap {
-      margin-top: 1.5rem;
-      text-align: right;
-    }
-
+    /* ── Reset ── */
+    .reset-wrap { margin-top: 1.5rem; text-align: right; }
     .reset-btn {
-      font-size: 12px;
-      color: #888;
+      font-size: 12.5px;
+      color: #4C42CF;
       cursor: pointer;
       background: none;
       border: none;
@@ -185,161 +200,194 @@
       text-decoration: underline;
       padding: 0;
     }
+    .reset-btn:hover { color: #1F1976; }
+    .reset-btn:focus-visible { outline: 2px solid #ACA8EA; border-radius: 2px; }
 
-    .reset-btn:hover { color: #333; }
+    /* ── ARIA live region (visually hidden) ── */
+    .sr-live {
+      position: absolute;
+      width: 1px; height: 1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+    }
+
+    .section { margin-bottom: 0; }
   </style>
 </head>
 <body>
 
-  <!-- .filter() -->
-  <div class="section">
-    <div class="method-label"><code>.filter()</code> — pure method</div>
-    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+  <!-- ARIA live region — screen readers announce results here -->
+  <div id="aria-live" class="sr-live" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="directions" role="note">
+    <strong>How to use this visualizer:</strong>
+    <ol>
+      <li>Look at the code — notice the original array and the method being used.</li>
+      <li>Try to predict: will the original array change, or stay the same?</li>
+      <li>Press <strong>Run this code</strong> and compare the original array to the result.</li>
+    </ol>
+  </div>
+
+  <!-- ── .filter() ── -->
+  <section class="section" aria-labelledby="filter-heading">
+    <div class="section-header">
+      <h2 id="filter-heading">.filter()</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using .filter() to remove art from the opportunities array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
 
 const result = opportunities.<span class="hl">filter</span>(role => role !== "art");
 
 console.log(opportunities); <span class="comment">// ?</span>
 console.log(result);       <span class="comment">// ?</span></div>
-    <button class="run-btn" onclick="runFilter()">
-      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+    <button class="run-btn" onclick="runFilter()" aria-controls="filter-orig filter-result filter-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
       Run this code
     </button>
     <div class="arrays-row">
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-orig">original</span> opportunities</div>
-        <div class="arr-items" id="filter-orig"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="filter-orig" role="list" aria-label="Original opportunities array"><span class="empty-msg">not run yet</span></div>
       </div>
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-result">result</span> result</div>
-        <div class="arr-items" id="filter-result"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="filter-result" role="list" aria-label="Result array returned by filter"><span class="empty-msg">not run yet</span></div>
       </div>
     </div>
-    <div class="verdict pure" id="filter-verdict">
-      <span class="icon">&#10003;</span> Original array unchanged — <code>.filter()</code> is a pure method. It returned a brand new array.
+    <div class="verdict pure" id="filter-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#10003;</span> <span class="type-badge pure">Pure method</span> Original array unchanged — <code>.filter()</code> returned a brand new array.
     </div>
-  </div>
+  </section>
 
   <hr class="divider">
 
-  <!-- .map() -->
-  <div class="section">
-    <div class="method-label"><code>.map()</code> — pure method</div>
-    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+  <!-- ── .map() ── -->
+  <section class="section" aria-labelledby="map-heading">
+    <div class="section-header">
+      <h2 id="map-heading">.map()</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using .map() to uppercase each item in the opportunities array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
 
 const result = opportunities.<span class="hl">map</span>(role => role.toUpperCase());
 
 console.log(opportunities); <span class="comment">// ?</span>
 console.log(result);       <span class="comment">// ?</span></div>
-    <button class="run-btn" onclick="runMap()">
-      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+    <button class="run-btn" onclick="runMap()" aria-controls="map-orig map-result map-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
       Run this code
     </button>
     <div class="arrays-row">
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-orig">original</span> opportunities</div>
-        <div class="arr-items" id="map-orig"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="map-orig" role="list" aria-label="Original opportunities array"><span class="empty-msg">not run yet</span></div>
       </div>
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-result">result</span> result</div>
-        <div class="arr-items" id="map-result"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="map-result" role="list" aria-label="Result array returned by map"><span class="empty-msg">not run yet</span></div>
       </div>
     </div>
-    <div class="verdict pure" id="map-verdict">
-      <span class="icon">&#10003;</span> Original array unchanged — <code>.map()</code> is a pure method. Each item was transformed into a brand new array.
+    <div class="verdict pure" id="map-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#10003;</span> <span class="type-badge pure">Pure method</span> Original array unchanged — <code>.map()</code> transformed each item into a brand new array.
     </div>
-  </div>
+  </section>
 
   <hr class="divider">
 
-  <!-- .forEach() -->
-  <div class="section">
-    <div class="method-label"><code>.forEach()</code> — side effect</div>
-    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+  <!-- ── .forEach() ── -->
+  <section class="section" aria-labelledby="foreach-heading">
+    <div class="section-header">
+      <h2 id="foreach-heading">.forEach()</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using .forEach() to uppercase items, modifying the original array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
 
 opportunities.<span class="hl">forEach</span>((role, i) => {
   opportunities[i] = role.toUpperCase();
 });
 
 console.log(opportunities); <span class="comment">// ?</span></div>
-    <button class="run-btn" onclick="runForEach()">
-      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+    <button class="run-btn" onclick="runForEach()" aria-controls="foreach-before foreach-after foreach-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
       Run this code
     </button>
     <div class="arrays-row">
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-orig">original</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(before)</span></div>
-        <div class="arr-items" id="foreach-before"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="foreach-before" role="list" aria-label="Original opportunities array before forEach runs"><span class="empty-msg">not run yet</span></div>
       </div>
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-mut">mutated</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(after)</span></div>
-        <div class="arr-items" id="foreach-after"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="foreach-after" role="list" aria-label="Opportunities array after forEach mutates it"><span class="empty-msg">not run yet</span></div>
       </div>
     </div>
-    <div class="verdict mutated" id="foreach-verdict">
-      <span class="icon">&#9888;</span> Original array was changed! <code>.forEach()</code> has no return value — any modification inside it is a side effect on the original data.
+    <div class="verdict mutated" id="foreach-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#9888;</span> <span class="type-badge mutated">Side effect</span> Original array was changed! <code>.forEach()</code> has no return value — any modification inside it is a side effect on the original data.
     </div>
-  </div>
+  </section>
 
   <hr class="divider">
 
-  <!-- for loop -->
-  <div class="section">
-    <div class="method-label"><code>for loop</code> — side effect</div>
-    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+  <!-- ── for loop ── -->
+  <section class="section" aria-labelledby="forloop-heading">
+    <div class="section-header">
+      <h2 id="forloop-heading">for loop</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using a for loop to overwrite each item in the opportunities array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
 
 for (let i = 0; i &lt; opportunities.length; i++) {
   <span class="hl">opportunities[i]</span> = opportunities[i].toUpperCase();
 }
 
 console.log(opportunities); <span class="comment">// ?</span></div>
-    <button class="run-btn" onclick="runFor()">
-      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+    <button class="run-btn" onclick="runFor()" aria-controls="for-before for-after for-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
       Run this code
     </button>
     <div class="arrays-row">
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-orig">original</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(before)</span></div>
-        <div class="arr-items" id="for-before"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="for-before" role="list" aria-label="Original opportunities array before for loop runs"><span class="empty-msg">not run yet</span></div>
       </div>
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-mut">mutated</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(after)</span></div>
-        <div class="arr-items" id="for-after"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="for-after" role="list" aria-label="Opportunities array after for loop mutates it"><span class="empty-msg">not run yet</span></div>
       </div>
     </div>
-    <div class="verdict mutated" id="for-verdict">
-      <span class="icon">&#9888;</span> Original array was changed! The <code>for</code> loop wrote directly into <code>opportunities[i]</code>, overwriting each item in place.
+    <div class="verdict mutated" id="for-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#9888;</span> <span class="type-badge mutated">Side effect</span> Original array was changed! The <code>for</code> loop wrote directly into <code>opportunities[i]</code>, overwriting each item in place.
     </div>
-  </div>
+  </section>
 
   <hr class="divider">
 
-  <!-- .shift() -->
-  <div class="section">
-    <div class="method-label"><code>.shift()</code> — side effect</div>
-    <div class="code-block"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+  <!-- ── .shift() ── -->
+  <section class="section" aria-labelledby="shift-heading">
+    <div class="section-header">
+      <h2 id="shift-heading">.shift()</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using .shift() to remove the first item from the opportunities array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
 
 const first = opportunities.<span class="hl">shift</span>();
 
 console.log(opportunities); <span class="comment">// ?</span>
 console.log(first);        <span class="comment">// ?</span></div>
-    <button class="run-btn" onclick="runShift()">
-      <svg viewBox="0 0 16 16"><path d="M3 2l11 6-11 6V2z"/></svg>
+    <button class="run-btn" onclick="runShift()" aria-controls="shift-before shift-after shift-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
       Run this code
     </button>
     <div class="arrays-row">
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-orig">original</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(before)</span></div>
-        <div class="arr-items" id="shift-before"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="shift-before" role="list" aria-label="Original opportunities array before shift runs"><span class="empty-msg">not run yet</span></div>
       </div>
       <div class="arr-card">
         <div class="arr-title"><span class="badge badge-mut">mutated</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(after)</span></div>
-        <div class="arr-items" id="shift-after"><span class="empty-msg">not run yet</span></div>
+        <div class="arr-items" id="shift-after" role="list" aria-label="Opportunities array after shift removes the first item"><span class="empty-msg">not run yet</span></div>
       </div>
     </div>
-    <div class="verdict mutated" id="shift-verdict">
-      <span class="icon">&#9888;</span> Original array was changed! <code>.shift()</code> removed <code>"tutoring"</code> from the front and returned it — the original is now shorter.
+    <div class="verdict mutated" id="shift-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#9888;</span> <span class="type-badge mutated">Side effect</span> Original array was changed! <code>.shift()</code> removed <code>"tutoring"</code> from the front and returned it — the original is now shorter.
     </div>
-  </div>
+  </section>
 
   <div class="reset-wrap">
     <button class="reset-btn" onclick="resetAll()">Reset all</button>
@@ -347,6 +395,12 @@ console.log(first);        <span class="comment">// ?</span></div>
 
   <script>
     const BASE = ["tutoring","mentoring","coding","art","music"];
+    const liveRegion = document.getElementById('aria-live');
+
+    function announce(msg) {
+      liveRegion.textContent = '';
+      setTimeout(() => { liveRegion.textContent = msg; }, 50);
+    }
 
     function makeItems(containerId, items, classes) {
       const container = document.getElementById(containerId);
@@ -355,6 +409,7 @@ console.log(first);        <span class="comment">// ?</span></div>
         const el = document.createElement('span');
         el.className = 'item ' + (classes[i] || '');
         el.textContent = '"' + v + '"';
+        el.setAttribute('role', 'listitem');
         container.appendChild(el);
         setTimeout(() => el.classList.add('visible'), i * 60 + 30);
       });
@@ -372,6 +427,7 @@ console.log(first);        <span class="comment">// ?</span></div>
       makeItems('filter-orig', [...BASE], BASE.map(() => 'same'));
       makeItems('filter-result', result, result.map(() => 'new'));
       showVerdict('filter-verdict', 'pure');
+      announce('.filter() ran. Original array is unchanged: ' + BASE.join(', ') + '. Result is a new array: ' + result.join(', ') + '. This is a pure method.');
     }
 
     function runMap() {
@@ -379,6 +435,7 @@ console.log(first);        <span class="comment">// ?</span></div>
       makeItems('map-orig', [...BASE], BASE.map(() => 'same'));
       makeItems('map-result', result, result.map(() => 'new'));
       showVerdict('map-verdict', 'pure');
+      announce('.map() ran. Original array is unchanged: ' + BASE.join(', ') + '. Result is a new array: ' + result.join(', ') + '. This is a pure method.');
     }
 
     function runForEach() {
@@ -387,6 +444,7 @@ console.log(first);        <span class="comment">// ?</span></div>
       makeItems('foreach-before', [...BASE], BASE.map(() => ''));
       makeItems('foreach-after', mut, mut.map(() => 'changed'));
       showVerdict('foreach-verdict', 'mutated');
+      announce('.forEach() ran. The original array was mutated. After: ' + mut.join(', ') + '. This is a side effect.');
     }
 
     function runFor() {
@@ -395,6 +453,7 @@ console.log(first);        <span class="comment">// ?</span></div>
       makeItems('for-before', [...BASE], BASE.map(() => ''));
       makeItems('for-after', mut, mut.map(() => 'changed'));
       showVerdict('for-verdict', 'mutated');
+      announce('The for loop ran. The original array was mutated. After: ' + mut.join(', ') + '. This is a side effect.');
     }
 
     function runShift() {
@@ -403,6 +462,7 @@ console.log(first);        <span class="comment">// ?</span></div>
       makeItems('shift-before', [...BASE], BASE.map((v, i) => i === 0 ? 'removed' : ''));
       makeItems('shift-after', mut, mut.map(() => 'changed'));
       showVerdict('shift-verdict', 'mutated');
+      announce('.shift() ran. The first item, tutoring, was removed from the original array. Remaining items: ' + mut.join(', ') + '. This is a side effect.');
     }
 
     function resetAll() {
@@ -421,6 +481,7 @@ console.log(first);        <span class="comment">// ?</span></div>
         v.style.display = 'none';
         v.style.opacity = '0';
       });
+      announce('Visualizer reset. All examples ready to run again.');
     }
   </script>
 </body>
