@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Array State Visualizer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      background: #ffffff;
+      color: #1a1a1a;
+      padding: 1.25rem 1.5rem 2rem;
+      line-height: 1.5;
+    }
+
+    /* ── Directions banner ── */
+    .directions {
+      background: #D5EFFF;
+      border-radius: 10px;
+      padding: 13px 16px;
+      margin-bottom: 1.75rem;
+      font-size: 13.5px;
+      color: #06338D;
+      line-height: 1.6;
+    }
+    .directions ol { margin: 6px 0 0 1.1rem; padding: 0; }
+    .directions li { margin-bottom: 3px; }
+
+    /* ── Section header ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .section-header h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1F1976;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .type-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .type-badge.pure    { background: #E4E2F8; color: #1F1976; }
+    .type-badge.mutated { background: #FFE3CE; color: #510000; }
+
+    /* ── Code block ── */
+    .code-block {
+      background: #1F1976;
+      border-radius: 10px;
+      padding: 16px 18px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: #E4E2F8;
+      margin-bottom: 12px;
+      line-height: 1.8;
+      white-space: pre;
+      overflow-x: auto;
+    }
+    .hl {
+      background: #4C42CF;
+      color: #ffffff;
+      border-radius: 3px;
+      padding: 1px 4px;
+      font-weight: 700;
+    }
+    .comment { color: #ACA8EA; font-style: italic; }
+
+    /* ── Run button ── */
+    .run-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: none;
+      background: #4C42CF;
+      color: #ffffff;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-bottom: 14px;
+      transition: background 0.15s;
+    }
+    .run-btn:hover  { background: #1F1976; }
+    .run-btn:active { transform: scale(0.98); }
+    .run-btn:focus-visible { outline: 3px solid #ACA8EA; outline-offset: 2px; }
+    .run-btn svg { width: 13px; height: 13px; fill: #fff; }
+
+    /* ── Array cards ── */
+    .arrays-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .arr-card {
+      border-radius: 10px;
+      border: 1px solid #E4E2F8;
+      background: #fff;
+      padding: 13px 14px;
+    }
+    .arr-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1F1976;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge {
+      font-size: 10.5px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+    }
+    .badge-orig   { background: #E4E2F8; color: #1F1976; }
+    .badge-result { background: #CCF1D0; color: #003F25; }
+    .badge-mut    { background: #FFE3CE; color: #510000; }
+
+    /* ── Array items ── */
+    .arr-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      min-height: 34px;
+    }
+    .item {
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-weight: 600;
+      background: #f5f5f3;
+      border: 1px solid #e0e0d8;
+      color: #1a1a1a;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.25s, transform 0.25s, background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .item.visible  { opacity: 1; transform: translateY(0); }
+    .item.same     { background: #E4E2F8; border-color: #ACA8EA; color: #1F1976; }
+    .item.new      { background: #CCF1D0; border-color: #7CDB87; color: #003F25; }
+    .item.changed  { background: #FFE3CE; border-color: #FFA868; color: #510000; }
+    .item.removed  { background: #FFE3CE; border-color: #FFA868; color: #510000; text-decoration: line-through; opacity: 0.55; }
+
+    .empty-msg {
+      font-size: 12px;
+      color: #aaa;
+      font-style: italic;
+      padding: 4px 0;
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── Verdict ── */
+    .verdict {
+      margin-top: 10px;
+      font-size: 13.5px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      line-height: 1.5;
+    }
+    .verdict.pure    { background: #E4E2F8; color: #1F1976; border: 1px solid #ACA8EA; }
+    .verdict.mutated { background: #FFE3CE; color: #510000; border: 1px solid #FFA868; }
+    .verdict .icon   { margin-right: 5px; font-size: 14px; vertical-align: -1px; }
+    .verdict .type-badge { vertical-align: middle; margin-right: 6px; }
+
+    /* ── Divider ── */
+    hr.divider {
+      border: none;
+      border-top: 1px solid #E4E2F8;
+      margin: 1.75rem 0;
+    }
+
+    /* ── Reset ── */
+    .reset-wrap { margin-top: 1.5rem; text-align: right; }
+    .reset-btn {
+      font-size: 12.5px;
+      color: #4C42CF;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      text-decoration: underline;
+      padding: 0;
+    }
+    .reset-btn:hover { color: #1F1976; }
+    .reset-btn:focus-visible { outline: 2px solid #ACA8EA; border-radius: 2px; }
+
+    /* ── ARIA live region (visually hidden) ── */
+    .sr-live {
+      position: absolute;
+      width: 1px; height: 1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+    }
+
+    .section { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- ARIA live region — screen readers announce results here -->
+  <div id="aria-live" class="sr-live" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="directions" role="note">
+    <strong>How to use this visualizer:</strong>
+    <ol>
+      <li>Look at the code — notice the original array and the method being used.</li>
+      <li>Try to predict: will the original array change, or stay the same?</li>
+      <li>Press <strong>Run this code</strong> and compare the original array to the result.</li>
+    </ol>
+  </div>
+
+  <!-- ── .filter() ── -->
+  <section class="section" aria-labelledby="filter-heading">
+    <div class="section-header">
+      <h2 id="filter-heading">.filter()</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using .filter() to remove art from the opportunities array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+const result = opportunities.<span class="hl">filter</span>(role => role !== "art");
+
+console.log(opportunities); <span class="comment">// ?</span>
+console.log(result);       <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runFilter()" aria-controls="filter-orig filter-result filter-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities</div>
+        <div class="arr-items" id="filter-orig" role="list" aria-label="Original opportunities array"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-result">result</span> result</div>
+        <div class="arr-items" id="filter-result" role="list" aria-label="Result array returned by filter"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict pure" id="filter-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#10003;</span> <span class="type-badge pure">Pure method</span> Original array unchanged — <code>.filter()</code> returned a brand new array.
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── .map() ── -->
+  <section class="section" aria-labelledby="map-heading">
+    <div class="section-header">
+      <h2 id="map-heading">.map()</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using .map() to uppercase each item in the opportunities array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+const result = opportunities.<span class="hl">map</span>(role => role.toUpperCase());
+
+console.log(opportunities); <span class="comment">// ?</span>
+console.log(result);       <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runMap()" aria-controls="map-orig map-result map-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities</div>
+        <div class="arr-items" id="map-orig" role="list" aria-label="Original opportunities array"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-result">result</span> result</div>
+        <div class="arr-items" id="map-result" role="list" aria-label="Result array returned by map"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict pure" id="map-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#10003;</span> <span class="type-badge pure">Pure method</span> Original array unchanged — <code>.map()</code> transformed each item into a brand new array.
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── .forEach() ── -->
+  <section class="section" aria-labelledby="foreach-heading">
+    <div class="section-header">
+      <h2 id="foreach-heading">.forEach()</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using .forEach() to uppercase items, modifying the original array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+opportunities.<span class="hl">forEach</span>((role, i) => {
+  opportunities[i] = role.toUpperCase();
+});
+
+console.log(opportunities); <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runForEach()" aria-controls="foreach-before foreach-after foreach-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(before)</span></div>
+        <div class="arr-items" id="foreach-before" role="list" aria-label="Original opportunities array before forEach runs"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-mut">mutated</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(after)</span></div>
+        <div class="arr-items" id="foreach-after" role="list" aria-label="Opportunities array after forEach mutates it"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict mutated" id="foreach-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#9888;</span> <span class="type-badge mutated">Side effect</span> Original array was changed! <code>.forEach()</code> has no return value — any modification inside it is a side effect on the original data.
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── for loop ── -->
+  <section class="section" aria-labelledby="forloop-heading">
+    <div class="section-header">
+      <h2 id="forloop-heading">for loop</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using a for loop to overwrite each item in the opportunities array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+for (let i = 0; i &lt; opportunities.length; i++) {
+  <span class="hl">opportunities[i]</span> = opportunities[i].toUpperCase();
+}
+
+console.log(opportunities); <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runFor()" aria-controls="for-before for-after for-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(before)</span></div>
+        <div class="arr-items" id="for-before" role="list" aria-label="Original opportunities array before for loop runs"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-mut">mutated</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(after)</span></div>
+        <div class="arr-items" id="for-after" role="list" aria-label="Opportunities array after for loop mutates it"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict mutated" id="for-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#9888;</span> <span class="type-badge mutated">Side effect</span> Original array was changed! The <code>for</code> loop wrote directly into <code>opportunities[i]</code>, overwriting each item in place.
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ── .shift() ── -->
+  <section class="section" aria-labelledby="shift-heading">
+    <div class="section-header">
+      <h2 id="shift-heading">.shift()</h2>
+    </div>
+    <div class="code-block" role="img" aria-label="Code example using .shift() to remove the first item from the opportunities array"><span class="comment">const opportunities = ["tutoring","mentoring","coding","art","music"];</span>
+
+const first = opportunities.<span class="hl">shift</span>();
+
+console.log(opportunities); <span class="comment">// ?</span>
+console.log(first);        <span class="comment">// ?</span></div>
+    <button class="run-btn" onclick="runShift()" aria-controls="shift-before shift-after shift-verdict">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2l11 6-11 6V2z"/></svg>
+      Run this code
+    </button>
+    <div class="arrays-row">
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-orig">original</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(before)</span></div>
+        <div class="arr-items" id="shift-before" role="list" aria-label="Original opportunities array before shift runs"><span class="empty-msg">not run yet</span></div>
+      </div>
+      <div class="arr-card">
+        <div class="arr-title"><span class="badge badge-mut">mutated</span> opportunities <span style="font-size:10.5px;color:#aaa;font-weight:400;">(after)</span></div>
+        <div class="arr-items" id="shift-after" role="list" aria-label="Opportunities array after shift removes the first item"><span class="empty-msg">not run yet</span></div>
+      </div>
+    </div>
+    <div class="verdict mutated" id="shift-verdict" role="status">
+      <span class="icon" aria-hidden="true">&#9888;</span> <span class="type-badge mutated">Side effect</span> Original array was changed! <code>.shift()</code> removed <code>"tutoring"</code> from the front and returned it — the original is now shorter.
+    </div>
+  </section>
+
+  <div class="reset-wrap">
+    <button class="reset-btn" onclick="resetAll()">Reset all</button>
+  </div>
+
+  <script>
+    const BASE = ["tutoring","mentoring","coding","art","music"];
+    const liveRegion = document.getElementById('aria-live');
+
+    function announce(msg) {
+      liveRegion.textContent = '';
+      setTimeout(() => { liveRegion.textContent = msg; }, 50);
+    }
+
+    function makeItems(containerId, items, classes) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      items.forEach((v, i) => {
+        const el = document.createElement('span');
+        el.className = 'item ' + (classes[i] || '');
+        el.textContent = '"' + v + '"';
+        el.setAttribute('role', 'listitem');
+        container.appendChild(el);
+        setTimeout(() => el.classList.add('visible'), i * 60 + 30);
+      });
+    }
+
+    function showVerdict(id, type) {
+      const v = document.getElementById(id);
+      v.className = 'verdict ' + type;
+      v.style.display = 'block';
+      setTimeout(() => { v.style.opacity = '1'; }, 20);
+    }
+
+    function runFilter() {
+      const result = BASE.filter(r => r !== 'art');
+      makeItems('filter-orig', [...BASE], BASE.map(() => 'same'));
+      makeItems('filter-result', result, result.map(() => 'new'));
+      showVerdict('filter-verdict', 'pure');
+      announce('.filter() ran. Original array is unchanged: ' + BASE.join(', ') + '. Result is a new array: ' + result.join(', ') + '. This is a pure method.');
+    }
+
+    function runMap() {
+      const result = BASE.map(r => r.toUpperCase());
+      makeItems('map-orig', [...BASE], BASE.map(() => 'same'));
+      makeItems('map-result', result, result.map(() => 'new'));
+      showVerdict('map-verdict', 'pure');
+      announce('.map() ran. Original array is unchanged: ' + BASE.join(', ') + '. Result is a new array: ' + result.join(', ') + '. This is a pure method.');
+    }
+
+    function runForEach() {
+      const mut = [...BASE];
+      mut.forEach((r, i) => { mut[i] = r.toUpperCase(); });
+      makeItems('foreach-before', [...BASE], BASE.map(() => ''));
+      makeItems('foreach-after', mut, mut.map(() => 'changed'));
+      showVerdict('foreach-verdict', 'mutated');
+      announce('.forEach() ran. The original array was mutated. After: ' + mut.join(', ') + '. This is a side effect.');
+    }
+
+    function runFor() {
+      const mut = [...BASE];
+      for (let i = 0; i < mut.length; i++) { mut[i] = mut[i].toUpperCase(); }
+      makeItems('for-before', [...BASE], BASE.map(() => ''));
+      makeItems('for-after', mut, mut.map(() => 'changed'));
+      showVerdict('for-verdict', 'mutated');
+      announce('The for loop ran. The original array was mutated. After: ' + mut.join(', ') + '. This is a side effect.');
+    }
+
+    function runShift() {
+      const mut = [...BASE];
+      mut.shift();
+      makeItems('shift-before', [...BASE], BASE.map((v, i) => i === 0 ? 'removed' : ''));
+      makeItems('shift-after', mut, mut.map(() => 'changed'));
+      showVerdict('shift-verdict', 'mutated');
+      announce('.shift() ran. The first item, tutoring, was removed from the original array. Remaining items: ' + mut.join(', ') + '. This is a side effect.');
+    }
+
+    function resetAll() {
+      const ids = [
+        'filter-orig','filter-result',
+        'map-orig','map-result',
+        'foreach-before','foreach-after',
+        'for-before','for-after',
+        'shift-before','shift-after'
+      ];
+      ids.forEach(id => {
+        document.getElementById(id).innerHTML = '<span class="empty-msg">not run yet</span>';
+      });
+      ['filter-verdict','map-verdict','foreach-verdict','for-verdict','shift-verdict'].forEach(id => {
+        const v = document.getElementById(id);
+        v.style.display = 'none';
+        v.style.opacity = '0';
+      });
+      announce('Visualizer reset. All examples ready to run again.');
+    }
+  </script>
+</body>
+</html>
