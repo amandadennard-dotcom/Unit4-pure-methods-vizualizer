@@ -9,29 +9,48 @@
 
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
-      font-size: 14px;
+      font-size: 15px;
       background: #ffffff;
       color: #1a1a1a;
       padding: 1.25rem 1.5rem 2rem;
       line-height: 1.5;
     }
 
+    /* ── ARIA live (visually hidden) ── */
+    .sr-live {
+      position: absolute;
+      width: 1px; height: 1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+    }
+
+    /* ── Page heading ── */
+    .page-heading {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1F1976;
+      margin-bottom: 10px;
+    }
+
+    /* ── Directions banner ── */
     .directions {
-      background: #B7E0E5;
+      background: #D5EFFF;
       border-radius: 10px;
       padding: 13px 16px;
       margin-bottom: 1.5rem;
-      font-size: 13px;
-      color: #0a3d42;
+      font-size: 13.5px;
+      color: #06338D;
       line-height: 1.6;
     }
 
+    /* ── Method bank ── */
     .bank-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #888;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #1F1976;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       margin-bottom: 8px;
     }
 
@@ -39,20 +58,21 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      min-height: 48px;
+      min-height: 50px;
       padding: 12px;
       border-radius: 10px;
       background: #f5f5f3;
-      border: 1.5px dashed #d0d0c8;
-      margin-bottom: 1.5rem;
+      border: 1.5px dashed #ACA8EA;
+      margin-bottom: 1.25rem;
       transition: background 0.2s, border-color 0.2s;
     }
 
     .method-bank.drag-over {
-      background: #f0eefa;
-      border-color: #9b7ec8;
+      background: #E4E2F8;
+      border-color: #4C42CF;
     }
 
+    /* ── Drop zones ── */
     .zones {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -64,27 +84,27 @@
       min-height: 150px;
       border-radius: 10px;
       padding: 14px;
-      border: 1.5px dashed #d0d0c8;
+      border: 1.5px dashed #ACA8EA;
       transition: background 0.2s, border-color 0.2s;
     }
 
-    .zone-pure  { background: #f0eefa; border-color: #c5b3ea; }
-    .zone-side  { background: #f0f0ee; border-color: #c8c8c4; }
+    .zone-pure { background: #E4E2F8; border-color: #ACA8EA; }
+    .zone-side { background: #FFE3CE; border-color: #FFA868; }
 
-    .zone.drag-over.zone-pure { background: #e4d7f0; border-color: #7c5cbf; border-style: solid; }
-    .zone.drag-over.zone-side { background: #e4e4e0; border-color: #999; border-style: solid; }
+    .zone.drag-over.zone-pure { background: #cdc8f5; border-color: #4C42CF; border-style: solid; }
+    .zone.drag-over.zone-side { background: #ffd0a0; border-color: #F46800; border-style: solid; }
 
     .zone-label {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
-    .zone-pure .zone-label { color: #3C3489; }
-    .zone-side .zone-label { color: #444; }
+    .zone-pure .zone-label { color: #1F1976; }
+    .zone-side .zone-label { color: #510000; }
 
     .zone-items {
       display: flex;
@@ -93,35 +113,37 @@
       min-height: 50px;
     }
 
+    /* ── Chips ── */
     .chip {
       display: inline-flex;
       align-items: center;
-      padding: 6px 13px;
+      padding: 6px 14px;
       border-radius: 7px;
-      font-size: 13px;
+      font-size: 13.5px;
       font-family: 'Consolas', 'Courier New', monospace;
-      font-weight: 500;
+      font-weight: 600;
       cursor: grab;
       background: #ffffff;
-      border: 1px solid #d0d0c8;
-      color: #1a1a1a;
+      border: 1px solid #ACA8EA;
+      color: #1F1976;
       transition: background 0.2s, border-color 0.2s, color 0.2s, opacity 0.2s;
       user-select: none;
     }
 
-    .chip:active { cursor: grabbing; opacity: 0.65; }
+    .chip:active   { cursor: grabbing; opacity: 0.65; }
+    .chip:focus-visible { outline: 3px solid #4C42CF; outline-offset: 2px; }
 
     .chip.correct {
-      background: #e8f5ee;
-      border-color: #5DCAA5;
-      color: #085041;
+      background: #CCF1D0;
+      border-color: #7CDB87;
+      color: #003F25;
       cursor: default;
     }
 
     .chip.incorrect {
-      background: #fde8e8;
-      border-color: #f09595;
-      color: #791F1F;
+      background: #FFE3CE;
+      border-color: #FFA868;
+      color: #510000;
       animation: shake 0.3s ease;
     }
 
@@ -133,6 +155,32 @@
       75%      { transform: translateX(5px); }
     }
 
+    /* ── Progress bar ── */
+    .progress-wrap { margin-bottom: 1rem; }
+
+    .progress-track {
+      height: 4px;
+      background: #E4E2F8;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #4C42CF;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-label {
+      font-size: 11.5px;
+      color: #ACA8EA;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    /* ── Bottom row ── */
     .bottom-row {
       display: flex;
       align-items: center;
@@ -142,15 +190,12 @@
       gap: 10px;
     }
 
-    .score-area {
-      font-size: 13px;
-      color: var(--color-text-secondary, #666);
-    }
+    .score-area { font-size: 13px; color: #666; }
 
     .score-num {
       font-size: 22px;
-      font-weight: 600;
-      color: #1a1a1a;
+      font-weight: 700;
+      color: #1F1976;
       display: block;
       line-height: 1.2;
     }
@@ -158,124 +203,121 @@
     .btn-row { display: flex; gap: 8px; }
 
     .check-btn {
-      padding: 7px 18px;
+      padding: 8px 18px;
       border-radius: 8px;
-      border: 1.5px solid #534AB7;
-      background: #534AB7;
+      border: none;
+      background: #4C42CF;
       color: #fff;
-      font-size: 13px;
+      font-size: 13.5px;
       font-family: inherit;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       transition: background 0.15s;
     }
 
-    .check-btn:hover { background: #3C3489; border-color: #3C3489; }
+    .check-btn:hover { background: #1F1976; }
     .check-btn:disabled { opacity: 0.35; cursor: default; }
+    .check-btn:focus-visible { outline: 3px solid #ACA8EA; outline-offset: 2px; }
 
     .reset-btn {
-      padding: 7px 14px;
+      padding: 8px 14px;
       border-radius: 8px;
-      border: 1px solid #d0d0c8;
+      border: 1px solid #ACA8EA;
       background: transparent;
-      color: #666;
-      font-size: 13px;
+      color: #4C42CF;
+      font-size: 13.5px;
       font-family: inherit;
+      font-weight: 600;
       cursor: pointer;
+      transition: background 0.15s;
     }
 
-    .reset-btn:hover { background: #f5f5f3; }
+    .reset-btn:hover { background: #E4E2F8; }
+    .reset-btn:focus-visible { outline: 3px solid #ACA8EA; outline-offset: 2px; }
 
-    .hints {
-      margin-top: 1rem;
-      display: none;
-    }
+    /* ── Hints ── */
+    .hints { margin-top: 1rem; display: none; }
 
     .hint-item {
-      font-size: 12.5px;
-      padding: 7px 11px;
-      border-radius: 7px;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 8px;
       margin-bottom: 6px;
       line-height: 1.5;
     }
 
-    .hint-item.correct-hint { background: #e8f5ee; color: #085041; border: 1px solid #5DCAA5; }
-    .hint-item.wrong-hint   { background: #fde8e8; color: #791F1F; border: 1px solid #f09595; }
+    .hint-item.correct-hint { background: #CCF1D0; color: #003F25; border: 1px solid #7CDB87; }
+    .hint-item.wrong-hint   { background: #FFE3CE; color: #510000; border: 1px solid #FFA868; }
 
-    .progress-wrap {
-      margin-bottom: 1rem;
-    }
-
-    .progress-track {
-      height: 4px;
-      background: #e8e8e4;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: #534AB7;
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.3s ease;
-    }
-
-    .progress-label {
-      font-size: 11.5px;
-      color: #aaa;
-      margin-top: 4px;
-      text-align: right;
+    .hint-item code {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-weight: 700;
     }
   </style>
 </head>
 <body>
 
-  <div class="directions">
-    Drag each method into the correct category. Use what you saw in the visualizer to guide you — then check your answers.
+  <!-- ARIA live region -->
+  <div id="aria-live" class="sr-live" aria-live="polite" aria-atomic="true"></div>
+
+  <h1 class="page-heading">Pure or Not? Sorting What You Know</h1>
+
+  <div class="directions" role="note" aria-label="Activity directions">
+    Drag each method into the correct category — <strong>Pure / non-mutating</strong> or <strong>Has side effects</strong>. Use what you saw in the visualizer to guide you, then check your answers.
   </div>
 
-  <div class="bank-label">Methods to sort</div>
-  <div class="method-bank" id="bank"
-    ondragover="dragOver(event,'bank')"
-    ondragleave="dragLeave(event,'bank')"
-    ondrop="drop(event,'bank')">
+  <div class="bank-label" id="bank-label">Methods to sort</div>
+  <div class="method-bank"
+       id="bank"
+       role="list"
+       aria-labelledby="bank-label"
+       ondragover="dragOver(event,'bank')"
+       ondragleave="dragLeave(event,'bank')"
+       ondrop="drop(event,'bank')">
   </div>
 
-  <div class="progress-wrap">
-    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="progress-wrap" aria-hidden="true">
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
     <div class="progress-label" id="progress-label">0 of 5 placed</div>
   </div>
 
-  <div class="zones">
-    <div class="zone zone-pure" id="zone-pure"
-      ondragover="dragOver(event,'zone-pure')"
-      ondragleave="dragLeave(event,'zone-pure')"
-      ondrop="drop(event,'zone-pure')">
-      <div class="zone-label">&#10022; Pure / non-mutating</div>
-      <div class="zone-items" id="items-zone-pure"></div>
+  <div class="zones" role="group" aria-label="Sorting categories">
+    <div class="zone zone-pure"
+         id="zone-pure"
+         role="list"
+         aria-label="Pure or non-mutating methods"
+         ondragover="dragOver(event,'zone-pure')"
+         ondragleave="dragLeave(event,'zone-pure')"
+         ondrop="drop(event,'zone-pure')">
+      <div class="zone-label" aria-hidden="true">&#10022; Pure / non-mutating</div>
+      <div id="items-zone-pure" style="display:contents"></div>
     </div>
-    <div class="zone zone-side" id="zone-side"
-      ondragover="dragOver(event,'zone-side')"
-      ondragleave="dragLeave(event,'zone-side')"
-      ondrop="drop(event,'zone-side')">
-      <div class="zone-label">&#9889; Has side effects</div>
-      <div class="zone-items" id="items-zone-side"></div>
+    <div class="zone zone-side"
+         id="zone-side"
+         role="list"
+         aria-label="Methods with side effects"
+         ondragover="dragOver(event,'zone-side')"
+         ondragleave="dragLeave(event,'zone-side')"
+         ondrop="drop(event,'zone-side')">
+      <div class="zone-label" aria-hidden="true">&#9889; Has side effects</div>
+      <div id="items-zone-side" style="display:contents"></div>
     </div>
   </div>
 
   <div class="bottom-row">
-    <div class="score-area">
+    <div class="score-area" aria-live="polite">
       <span class="score-num" id="score-display">—</span>
       <span id="score-label">place all methods to check</span>
     </div>
     <div class="btn-row">
       <button class="reset-btn" onclick="reset()">Reset</button>
-      <button class="check-btn" id="check-btn" onclick="checkAll()" disabled>Check answers</button>
+      <button class="check-btn" id="check-btn" onclick="checkAll()" disabled aria-disabled="true">Check answers</button>
     </div>
   </div>
 
-  <div class="hints" id="hints"></div>
+  <div class="hints" id="hints" role="status" aria-label="Answer feedback"></div>
 
   <script>
     const METHODS = [
@@ -288,6 +330,12 @@
 
     let placement = {};
     let checked = false;
+    const liveRegion = document.getElementById('aria-live');
+
+    function announce(msg) {
+      liveRegion.textContent = '';
+      setTimeout(() => { liveRegion.textContent = msg; }, 50);
+    }
 
     function shuffle(arr) {
       const a = [...arr];
@@ -300,7 +348,6 @@
 
     function makeChip(m) {
       const el = document.createElement('div');
-      const loc = placement[m.id] || 'bank';
       let cls = 'chip';
       if (checked) {
         cls += placement[m.id] === m.zone ? ' correct locked' : ' incorrect locked';
@@ -309,24 +356,31 @@
       el.textContent = m.label;
       el.dataset.id = m.id;
       el.draggable = !checked;
-      el.ondragstart = e => e.dataTransfer.setData('text/plain', m.id);
+      el.setAttribute('role', 'listitem');
+      el.setAttribute('aria-label', m.label + (checked
+        ? (placement[m.id] === m.zone ? ' — correct' : ' — incorrect')
+        : ' — drag to sort'));
+      el.ondragstart = e => {
+        e.dataTransfer.setData('text/plain', m.id);
+        announce('Dragging ' + m.label);
+      };
       return el;
     }
 
     function render() {
-      const bank = document.getElementById('bank');
+      const bank    = document.getElementById('bank');
       const pureBin = document.getElementById('items-zone-pure');
       const sideBin = document.getElementById('items-zone-side');
-      bank.innerHTML = '';
+      bank.innerHTML    = '';
       pureBin.innerHTML = '';
       sideBin.innerHTML = '';
 
       shuffle(METHODS).forEach(m => {
-        const loc = placement[m.id] || 'bank';
+        const loc  = placement[m.id] || 'bank';
         const chip = makeChip(m);
-        if (loc === 'bank') bank.appendChild(chip);
+        if (loc === 'bank')      bank.appendChild(chip);
         else if (loc === 'zone-pure') pureBin.appendChild(chip);
-        else sideBin.appendChild(chip);
+        else                          sideBin.appendChild(chip);
       });
 
       updateProgress();
@@ -334,11 +388,14 @@
 
     function updateProgress() {
       const placed = Object.keys(placement).length;
-      const total = METHODS.length;
-      const pct = Math.round((placed / total) * 100);
+      const total  = METHODS.length;
+      const pct    = Math.round((placed / total) * 100);
       document.getElementById('progress-fill').style.width = pct + '%';
       document.getElementById('progress-label').textContent = placed + ' of ' + total + ' placed';
-      document.getElementById('check-btn').disabled = placed < total || checked;
+      const btn = document.getElementById('check-btn');
+      const ready = placed >= total && !checked;
+      btn.disabled = !ready;
+      btn.setAttribute('aria-disabled', String(!ready));
       if (placed < total) {
         document.getElementById('score-label').textContent = (total - placed) + ' left to place';
       } else if (!checked) {
@@ -361,7 +418,10 @@
       if (checked) return;
       const mid = e.dataTransfer.getData('text/plain');
       if (!mid) return;
+      const m = METHODS.find(x => x.id === mid);
+      const zoneName = id === 'zone-pure' ? 'Pure / non-mutating' : id === 'zone-side' ? 'Has side effects' : 'the method bank';
       placement[mid] = id;
+      announce((m ? m.label : mid) + ' moved to ' + zoneName + '.');
       render();
     }
 
@@ -373,14 +433,16 @@
       render();
 
       const pct = Math.round((correct / METHODS.length) * 100);
-      document.getElementById('score-display').textContent = correct + ' / ' + METHODS.length;
-      document.getElementById('score-label').textContent =
+      const msg =
         pct === 100 ? 'perfect — you know your methods!' :
-        pct >= 60  ? 'nice work — review the hints below' :
-                     'keep going — the hints below will help';
+        pct >= 60   ? 'nice work — review the hints below' :
+                      'keep going — the hints below will help';
+      document.getElementById('score-display').textContent = correct + ' / ' + METHODS.length;
+      document.getElementById('score-label').textContent = msg;
+      document.getElementById('check-btn').disabled = true;
 
       showHints(correct);
-      document.getElementById('check-btn').disabled = true;
+      announce('Answers checked. You got ' + correct + ' out of ' + METHODS.length + ' correct. ' + msg);
     }
 
     function showHints(correct) {
@@ -393,8 +455,7 @@
       }
 
       const wrong = METHODS.filter(m => placement[m.id] !== m.zone);
-      const right = METHODS.filter(m => placement[m.id] === m.zone);
-
+      const right  = METHODS.filter(m => placement[m.id] === m.zone);
       let html = '';
       wrong.forEach(m => {
         html += `<div class="hint-item wrong-hint"><code>${m.label}</code> — ${m.hint}</div>`;
@@ -407,13 +468,14 @@
 
     function reset() {
       placement = {};
-      checked = false;
+      checked   = false;
       document.getElementById('score-display').textContent = '—';
       document.getElementById('score-label').textContent = 'place all methods to check';
       document.getElementById('hints').style.display = 'none';
       document.getElementById('hints').innerHTML = '';
       document.getElementById('progress-fill').style.width = '0%';
       render();
+      announce('Activity reset. All methods returned to the bank.');
     }
 
     render();
